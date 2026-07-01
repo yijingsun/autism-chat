@@ -1,0 +1,24 @@
+# 环境变量（包含 API Key，绝不能提交）
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# FAISS 索引（二进制文件，不纳入版本控制）
+data/faiss_index/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
