@@ -70,7 +70,7 @@
 
 ```bash
 # 1. 克隆项目
-git clone https://github.com/your-username/autism-chat.git
+git clone https://github.com/yijingsun/autism-chat.git
 cd autism-chat
 
 # 2. 创建虚拟环境（需要 Python 3.10）
@@ -165,10 +165,16 @@ autism-chat/
 ├── .env.example               # 环境变量模板
 ├── Dockerfile                 # Docker 配置
 ├── docker-compose.yml         # Docker Compose 配置
+├── .chainlit/
+│   └── config.toml            # Chainlit UI 配置
+├── public/
+│   ├── custom.css             # 自定义样式
+│   └── loading.js             # 加载遮罩控制
 └── data/
-    └── knowledge/             # 知识库文档目录
-        ├── aba_intervention.txt
-        └── autism_communication.txt
+    ├── knowledge/             # 知识库文档目录
+    │   ├── aba_intervention.txt
+    │   └── autism_communication.txt
+    └── faiss_index/           # FAISS 向量索引（构建后生成）
 ```
 
 ---
@@ -179,7 +185,7 @@ autism-chat/
 
 System Prompt 是本项目的核心，体现了对自闭症儿童沟通方式的理解：
 
-1. **简短清晰**：每句不超过 15 个字，避免抽象表达
+1. **简短清晰**：句子简短易懂，避免抽象表达，每次回复 3-5 句保证内容丰富有温度
 2. **一次一问**：不给认知负担
 3. **正向鼓励**：多用"你真棒""你好厉害"
 4. **情绪共情优先**：检测到负面情绪时，先安慰再引导
