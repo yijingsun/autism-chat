@@ -145,6 +145,8 @@ python build_knowledge_base.py
 系统会自动将文档切分、向量化，存入 FAISS 索引。
 
 > 💡 知识库为可选功能。未构建时，系统仍可正常对话，仅不启用 RAG 检索。
+>
+> 🤗 Embedding 使用本地 HuggingFace 模型（`all-MiniLM-L6-v2`），无需额外 API Key。首次运行会自动下载模型（约 90MB）。
 
 ---
 
@@ -203,9 +205,10 @@ System Prompt 是本项目的核心，体现了对自闭症儿童沟通方式的
 ## 🛠️ 技术栈
 
 | 组件 | 技术选型 |
-|------|---------|
+|------|----------|
 | LLM 框架 | LangChain |
 | 向量数据库 | FAISS |
+| Embedding 模型 | HuggingFace `all-MiniLM-L6-v2`（本地） |
 | Web 界面 | Gradio |
 | LLM | DeepSeek API（可切换） |
 | 部署 | Docker |

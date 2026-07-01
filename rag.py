@@ -3,17 +3,16 @@ RAG 知识库模块
 负责从 FAISS 向量库中检索与当前对话相关的特教知识
 """
 import os
-from langchain_openai import OpenAIEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-from config import LLM_API_KEY, LLM_BASE_URL, FAISS_INDEX_PATH, TOP_K
+from config import FAISS_INDEX_PATH, TOP_K
 
 
 def get_embeddings():
-    """获取 Embedding 模型（使用 DeepSeek 兼容的 OpenAI 接口）"""
-    return OpenAIEmbeddings(
-        model="text-embedding-3-small",
-        openai_api_key=LLM_API_KEY,
-        openai_api_base=f"{LLM_BASE_URL}/v1",
+    """获取 Embedding 模型（使用本地 HuggingFace 模型）"""
+    return HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        model_kwargs={"device": "cpu"},
     )
 
 

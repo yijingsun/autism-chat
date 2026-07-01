@@ -7,17 +7,17 @@
 
 前置条件：
     1. 在 data/knowledge/ 目录下放入 .txt 文件（特教相关资料）
-    2. 配置好 .env 中的 LLM_API_KEY（用于调用 Embedding API）
+    2. 已安装 sentence-transformers（本地 Embedding 模型，无需 API Key）
 """
 import os
 import glob
-from langchain_openai import OpenAIEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import Document
 
 from config import (
-    LLM_API_KEY, LLM_BASE_URL, KNOWLEDGE_DIR, FAISS_INDEX_PATH,
+    KNOWLEDGE_DIR, FAISS_INDEX_PATH,
     CHUNK_SIZE, CHUNK_OVERLAP,
 )
 
@@ -61,13 +61,12 @@ def split_documents(documents: list[Document]) -> list[Document]:
 
 def build_and_save_index(chunks: list[Document]):
     """构建 FAISS 索引并保存到本地"""
-    embeddings = OpenAIEmbeddings(
-        model="text-embedding-3-small",
-        openai_api_key=LLM_API_KEY,
-        openai_api_base=f"{LLM_BASE_URL}/v1",
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        model_kwargs={"device": "cpu"},
     )
 
-    print("[进行中] 正在构建 FAISS 索引（调用 Embedding API）...")
+    print("[进行中] 正在构建 FAISS 索引（使用本地 HuggingFace Embedding 模型）...")
     index = FAISS.from_documents(chunks, embeddings)
 
     os.makedirs(FAISS_INDEX_PATH, exist_ok=True)
