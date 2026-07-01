@@ -41,7 +41,7 @@
     │
     ▼
 ┌─────────────────────────────────┐
-│  Gradio Web 界面                 │
+│  Chainlit Web 界面               │
 │  ├─ 对话窗口                     │
 │  ├─ 话题选择按钮                  │
 │  └─ 系统状态展示                  │
@@ -73,8 +73,8 @@
 git clone https://github.com/your-username/autism-chat.git
 cd autism-chat
 
-# 2. 创建虚拟环境（需要 Python 3.11）
-python3.11 -m venv .venv
+# 2. 创建虚拟环境（需要 Python 3.10）
+python3.10 -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 
 # 3. 安装依赖
@@ -88,8 +88,8 @@ cp .env.example .env
 python build_knowledge_base.py
 
 # 6. 启动应用
-python app.py
-# 浏览器打开 http://localhost:7860
+chainlit run app.py
+# 浏览器打开 http://localhost:8000
 ```
 
 ### 方式二：Docker 运行
@@ -102,7 +102,7 @@ cp .env.example .env
 # 2. 构建并启动
 docker compose up --build
 
-# 浏览器打开 http://localhost:7860
+# 浏览器打开 http://localhost:8000
 ```
 
 ---
@@ -154,7 +154,7 @@ python build_knowledge_base.py
 
 ```
 autism-chat/
-├── app.py                     # Gradio 主界面
+├── app.py                     # Chainlit 主界面
 ├── chain.py                   # LangChain 对话链组装
 ├── config.py                  # 配置中心
 ├── prompts.py                 # System Prompt 设计
@@ -209,7 +209,7 @@ System Prompt 是本项目的核心，体现了对自闭症儿童沟通方式的
 | LLM 框架 | LangChain |
 | 向量数据库 | FAISS |
 | Embedding 模型 | HuggingFace `all-MiniLM-L6-v2`（本地） |
-| Web 界面 | Gradio |
+| Web 界面 | Chainlit |
 | LLM | DeepSeek API（可切换） |
 | 部署 | Docker |
 

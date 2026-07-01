@@ -2,7 +2,7 @@ services:
   autism-chat:
     build: .
     ports:
-      - "7860:7860"
+      - "8000:8000"
     env_file:
       - .env
     volumes:

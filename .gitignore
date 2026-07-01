@@ -22,3 +22,6 @@ data/faiss_index/
 # OS
 .DS_Store
 Thumbs.db
+
+# Chainlit 自动生成的翻译文件（启动时自动创建，无需纳入版本控制）
+.chainlit/translations/

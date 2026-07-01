@@ -3,9 +3,7 @@
 组装 LangChain 对话链：System Prompt + 情绪检测 + RAG + 对话记忆
 """
 from langchain_openai import ChatOpenAI
-from langchain.memory import ConversationBufferWindowMemory
-from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
-from langchain.chains import ConversationChain
+from langchain.schema import SystemMessage, HumanMessage, AIMessage
 
 from config import LLM_API_KEY, LLM_BASE_URL, LLM_MODEL_NAME, MAX_HISTORY_TURNS
 from prompts import SYSTEM_PROMPT, EMOTION_HINTS
@@ -20,52 +18,38 @@ def get_llm() -> ChatOpenAI:
         api_key=LLM_API_KEY,
         base_url=LLM_BASE_URL,
         temperature=0.7,
-        max_tokens=300,  # 控制回复长度，适合儿童对话
+        max_tokens=600,  # 允许更充实的回复，避免屏幕空旷
     )
 
 
-def build_conversation_chain(faiss_index=None) -> ConversationChain:
+# 全局 LLM 和 FAISS 索引（懒初始化）
+_llm = None
+_faiss_index = None
+
+
+def init_chain(faiss_idx=None):
+    """初始化对话链"""
+    global _llm, _faiss_index
+    _llm = get_llm()
+    _faiss_index = faiss_idx
+
+
+def _ensure_initialized():
+    """确保 LLM 已初始化（懒加载）"""
+    global _llm
+    if _llm is None:
+        print("[chain] 懒初始化 LLM...", flush=True)
+        _llm = get_llm()
+
+
+def chat(user_input: str, history: list = None, topic_hint: str = "") -> str:
     """
-    构建对话链
-
-    Args:
-        faiss_index: FAISS 向量索引（可选，为 None 时 RAG 不生效）
-
-    Returns:
-        配置好的 ConversationChain
-    """
-    llm = get_llm()
-
-    # 使用滑动窗口记忆，控制上下文长度（自闭症儿童对话通常较短）
-    memory = ConversationBufferWindowMemory(k=MAX_HISTORY_TURNS)
-
-    # 构建 Prompt 模板
-    system_template = SystemMessagePromptTemplate.from_template(SYSTEM_PROMPT)
-    human_template = HumanMessagePromptTemplate.from_template("{input}")
-
-    prompt = ChatPromptTemplate.from_messages([system_template, human_template])
-
-    # 组装对话链
-    chain = ConversationChain(
-        llm=llm,
-        memory=memory,
-        prompt=prompt,
-        verbose=False,
-    )
-
-    # 将 FAISS 索引附加到 chain 上，供后续使用
-    chain._faiss_index = faiss_index
-
-    return chain
-
-
-def chat(user_input: str, chain: ConversationChain) -> str:
-    """
-    处理一轮对话
+    处理一轮对话（无状态，由 Chainlit 管理历史）
 
     Args:
         user_input: 用户输入
-        chain: 对话链实例
+        history: Chainlit 传入的对话历史 (messages 格式)
+        topic_hint: 可选的话题引导提示（如“打招呼”“数数游戏”等）
 
     Returns:
         模型回复文本
@@ -75,12 +59,38 @@ def chat(user_input: str, chain: ConversationChain) -> str:
     emotion_hint = EMOTION_HINTS.get(emotion, "")
 
     # 2. RAG 检索
-    faiss_index = getattr(chain, "_faiss_index", None)
-    context = retrieve_context(user_input, faiss_index)
+    context = retrieve_context(user_input, _faiss_index)
 
-    # 3. 调用 LLM
-    response = chain.invoke(
-        {"input": user_input, "emotion_hint": emotion_hint, "context": context}
+    # 3. 填充 System Prompt
+    filled_system_prompt = SYSTEM_PROMPT.format(
+        emotion_hint=emotion_hint,
+        context=context,
+        topic_hint=topic_hint,
     )
 
-    return response["response"]
+    # 4. 构建消息列表
+    messages = [SystemMessage(content=filled_system_prompt)]
+
+    # 加入历史对话（滑动窗口，控制上下文长度）
+    if history:
+        recent_history = history[-MAX_HISTORY_TURNS * 2:]
+        for msg in recent_history:
+            if isinstance(msg, dict):
+                role = msg.get("role", "")
+                content = msg.get("content", "")
+            else:
+                role = getattr(msg, "role", "")
+                content = getattr(msg, "content", "")
+            if role == "user":
+                messages.append(HumanMessage(content=content))
+            elif role == "assistant":
+                messages.append(AIMessage(content=content))
+
+    # 加入当前用户输入（话题发起时为空，不添加空消息）
+    if user_input.strip():
+        messages.append(HumanMessage(content=user_input))
+
+    # 5. 调用 LLM
+    _ensure_initialized()
+    response = _llm.invoke(messages)
+    return response.content

@@ -1,0 +1,137 @@
+/* 星星对话 - 自定义样式 */
+
+/* ========== 加载遮罩层 ========== */
+/* 初始化期间显示友好的加载画面，避免用户看到空白默认页面 */
+body.loading-overlay-active::before {
+    content: '' !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 50%, #fce4ec 100%) !important;
+    z-index: 2147483647 !important;
+    animation: loadingOverlay 20s ease-in-out forwards !important;
+    pointer-events: all !important;
+}
+
+body.loading-overlay-active::after {
+    content: '🌟 星星正在醒来...' !important;
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    font-size: 26px !important;
+    color: #f9a825 !important;
+    font-weight: bold !important;
+    z-index: 2147483647 !important;
+    letter-spacing: 2px !important;
+    text-shadow: 0 2px 8px rgba(249, 168, 37, 0.2) !important;
+    animation: loadingText 20s ease-in-out forwards !important;
+    pointer-events: none !important;
+}
+
+/* 加载动画：保持18秒可见，2秒淡出 */
+@keyframes loadingOverlay {
+    0%, 90% {
+        opacity: 1;
+        pointer-events: all;
+    }
+    100% {
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+@keyframes loadingText {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    10% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    30% {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    70% {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+    90% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+        pointer-events: none;
+    }
+}
+
+/* 当聊天消息出现时，立即隐藏遮罩（JS辅助） */
+body.chainlit-loading-done::before,
+body.chainlit-loading-done::after {
+    display: none !important;
+    animation: none !important;
+    content: none !important;
+}
+
+/* ========== 消息正文样式 ========== */
+
+/* 欢迎弹窗整体样式 */
+.markdown-body {
+    font-size: 16px !important;
+    line-height: 1.8 !important;
+}
+
+/* 欢迎弹窗标题 */
+.markdown-body h1 {
+    font-size: 24px !important;
+    text-align: center;
+    margin-bottom: 24px !important;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+/* 标题与正文之间的间距 */
+.markdown-body h1 + p {
+    margin-top: 20px !important;
+}
+
+/* 正文字体大小统一 */
+.markdown-body p {
+    font-size: 16px !important;
+    line-height: 1.8 !important;
+    margin-bottom: 12px !important;
+}
+
+/* 列表字体 */
+.markdown-body li {
+    font-size: 15px !important;
+    line-height: 1.8 !important;
+}
+
+/* 引用块样式 */
+.markdown-body blockquote {
+    font-size: 15px !important;
+    border-left-color: #f9a825 !important;
+    background-color: #fffde7 !important;
+    padding: 12px 16px !important;
+    border-radius: 8px;
+    margin: 20px 0 !important;
+}
+
+/* "说明"标签 - 隐藏或美化左上角标题 */
+.MuiDialogTitle-root {
+    font-size: 18px !important;
+    padding: 16px 24px !important;
+}
+
+/* 欢迎弹窗内容区域增加内边距 */
+.MuiDialogContent-root {
+    padding: 24px 32px !important;
+}
