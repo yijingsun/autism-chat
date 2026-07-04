@@ -21,7 +21,8 @@ body.loading-overlay-active::after {
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%, -50%) !important;
-    font-size: 26px !important;
+    font-size: clamp(16px, 5vw, 26px) !important;
+    white-space: nowrap !important;
     color: #f9a825 !important;
     font-weight: bold !important;
     z-index: 2147483647 !important;

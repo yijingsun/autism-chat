@@ -19,6 +19,7 @@ def get_llm() -> ChatOpenAI:
         base_url=LLM_BASE_URL,
         temperature=0.7,
         max_tokens=600,  # 允许更充实的回复，避免屏幕空旷
+        streaming=True,  # 启用流式输出，降低首字延迟
     )
 
 
@@ -42,17 +43,9 @@ def _ensure_initialized():
         _llm = get_llm()
 
 
-def chat(user_input: str, history: list = None, topic_hint: str = "") -> str:
+def _build_messages(user_input: str, history: list = None, topic_hint: str = "") -> list:
     """
-    处理一轮对话（无状态，由 Chainlit 管理历史）
-
-    Args:
-        user_input: 用户输入
-        history: Chainlit 传入的对话历史 (messages 格式)
-        topic_hint: 可选的话题引导提示（如“打招呼”“数数游戏”等）
-
-    Returns:
-        模型回复文本
+    构建 LLM 消息列表（公共逻辑，供同步/异步调用复用）
     """
     # 1. 情绪检测
     emotion = detect_emotion(user_input)
@@ -90,7 +83,34 @@ def chat(user_input: str, history: list = None, topic_hint: str = "") -> str:
     if user_input.strip():
         messages.append(HumanMessage(content=user_input))
 
-    # 5. 调用 LLM
+    return messages
+
+
+def chat(user_input: str, history: list = None, topic_hint: str = "") -> str:
+    """
+    处理一轮对话（同步，兼容旧调用）
+    """
     _ensure_initialized()
+    messages = _build_messages(user_input, history, topic_hint)
     response = _llm.invoke(messages)
     return response.content
+
+
+async def chat_stream(user_input: str, history: list = None, topic_hint: str = ""):
+    """
+    流式处理一轮对话，逐 token 推送到 Chainlit 界面
+
+    Args:
+        user_input: 用户输入
+        history: 对话历史
+        topic_hint: 话题引导提示
+
+    Yields:
+        每个 token 文本片段
+    """
+    _ensure_initialized()
+    messages = _build_messages(user_input, history, topic_hint)
+
+    async for chunk in _llm.astream(messages):
+        if chunk.content:
+            yield chunk.content

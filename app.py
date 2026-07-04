@@ -6,7 +6,7 @@
     chainlit run app.py
 """
 import chainlit as cl
-from chain import init_chain, chat
+from chain import init_chain, chat, chat_stream
 from rag import load_faiss_index
 from prompts import TOPIC_SCENARIOS
 from emotion import detect_emotion, get_matched_keywords
@@ -85,15 +85,17 @@ async def handle_topic_selection(action: cl.Action):
     # 获取对话历史
     message_history = cl.user_session.get("message_history", [])
 
-    # 调用 LLM，仅通过 topic_hint 引导，不传入用户消息
-    response = chat("", message_history, topic_hint=topic_prompt)
+    # 流式输出 LLM 回复
+    msg = cl.Message(content="", author="星星")
+    full_response = ""
+    async for token in chat_stream("", message_history, topic_hint=topic_prompt):
+        await msg.stream_token(token)
+        full_response += token
+    await msg.send()
 
     # 只记录助手的发起消息到历史，不添加虚拟用户消息
-    message_history.append({"role": "assistant", "content": response})
+    message_history.append({"role": "assistant", "content": full_response})
     cl.user_session.set("message_history", message_history)
-
-    # 发送 LLM 生成的开场消息
-    await cl.Message(content=response, author="星星").send()
 
 
 # ============================================================
@@ -117,13 +119,15 @@ async def on_message(message: cl.Message):
     # 获取对话历史
     message_history = cl.user_session.get("message_history", [])
 
-    # 调用 LLM
-    response = chat(user_input, message_history)
+    # 流式输出 LLM 回复
+    msg = cl.Message(content="", author="星星")
+    full_response = ""
+    async for token in chat_stream(user_input, message_history):
+        await msg.stream_token(token)
+        full_response += token
+    await msg.send()
 
     # 更新历史
     message_history.append({"role": "user", "content": user_input})
-    message_history.append({"role": "assistant", "content": response})
+    message_history.append({"role": "assistant", "content": full_response})
     cl.user_session.set("message_history", message_history)
-
-    # 发送回复
-    await cl.Message(content=response, author="星星").send()
