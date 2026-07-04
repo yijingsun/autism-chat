@@ -19,6 +19,7 @@ from langchain.schema import Document
 from config import (
     KNOWLEDGE_DIR, FAISS_INDEX_PATH,
     CHUNK_SIZE, CHUNK_OVERLAP,
+    EMBEDDING_MODEL_NAME,
 )
 
 
@@ -62,7 +63,7 @@ def split_documents(documents: list[Document]) -> list[Document]:
 def build_and_save_index(chunks: list[Document]):
     """构建 FAISS 索引并保存到本地"""
     embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        model_name=EMBEDDING_MODEL_NAME,
         model_kwargs={"device": "cpu"},
     )
 

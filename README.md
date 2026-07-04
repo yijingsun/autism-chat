@@ -100,7 +100,7 @@ cp .env.example .env
 # 编辑 .env，填入你的 LLM API Key
 
 # 2. 构建并启动
-docker compose up --build
+docker compose up -d --build
 
 # 浏览器打开 http://localhost:8000
 ```

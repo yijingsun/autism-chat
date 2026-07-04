@@ -9,4 +9,6 @@ services:
       # 挂载知识库目录，方便随时添加资料
       - ./data/knowledge:/app/data/knowledge
       - ./data/faiss_index:/app/data/faiss_index
+      # 挂载 HuggingFace 模型缓存，避免重复下载
+      - ./data/hf_cache:/app/data/hf_cache
     restart: unless-stopped

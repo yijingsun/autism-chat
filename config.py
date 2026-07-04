@@ -16,6 +16,14 @@ LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://api.deepseek.com")
 LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME", "deepseek-chat")
 
 # ============================================================
+# Embedding 模型配置
+# ============================================================
+EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
+HF_HOME = os.path.join(os.path.dirname(__file__), "data", "hf_cache")
+os.environ["HF_HOME"] = HF_HOME  # 统一设置 HuggingFace 缓存路径
+os.environ.setdefault("HF_ENDPOINT", "https://hf-mirror.com")  # 国内镜像加速
+
+# ============================================================
 # RAG 配置
 # ============================================================
 KNOWLEDGE_DIR = os.path.join(os.path.dirname(__file__), "data", "knowledge")

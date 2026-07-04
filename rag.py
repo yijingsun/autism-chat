@@ -5,13 +5,13 @@ RAG 知识库模块
 import os
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-from config import FAISS_INDEX_PATH, TOP_K
+from config import FAISS_INDEX_PATH, TOP_K, EMBEDDING_MODEL_NAME
 
 
 def get_embeddings():
     """获取 Embedding 模型（使用本地 HuggingFace 模型）"""
     return HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        model_name=EMBEDDING_MODEL_NAME,
         model_kwargs={"device": "cpu"},
     )
 
