@@ -13,6 +13,9 @@ venv/
 # FAISS 索引（二进制文件，不纳入版本控制）
 data/faiss_index/
 
+# hf_cache 缓存（包含模型文件，体积较大，不纳入版本控制）
+data/hf_cache/
+
 # IDE
 .vscode/
 .idea/
