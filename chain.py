@@ -109,8 +109,9 @@ async def chat_stream(user_input: str, history: list = None, topic_hint: str = "
         每个 token 文本片段
     """
     _ensure_initialized()
-    messages = _build_messages(user_input, history, topic_hint)
+    messages = _build_messages(user_input, history, topic_hint) # 构建消息列表
 
+    # 调用链: astream(框架层tracing) → _astream(构造payload) → openai SDK.create() → httpx发送HTTP POST到LLM API
     async for chunk in _llm.astream(messages):
         if chunk.content:
             yield chunk.content

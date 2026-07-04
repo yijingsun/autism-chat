@@ -120,12 +120,12 @@ async def on_message(message: cl.Message):
     message_history = cl.user_session.get("message_history", [])
 
     # 流式输出 LLM 回复
-    msg = cl.Message(content="", author="星星")
-    full_response = ""
-    async for token in chat_stream(user_input, message_history):
-        await msg.stream_token(token)
-        full_response += token
-    await msg.send()
+    msg = cl.Message(content="", author="星星") # 创建消息对象
+    full_response = "" # 初始化完整响应
+    async for token in chat_stream(user_input, message_history): # 流式生成回复
+        await msg.stream_token(token) # 流式发送回复
+        full_response += token # 累加响应
+    await msg.send() # 发送消息
 
     # 更新历史
     message_history.append({"role": "user", "content": user_input})
