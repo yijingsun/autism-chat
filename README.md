@@ -198,13 +198,18 @@ System Prompt 是本项目的核心，体现了对自闭症儿童沟通方式的
 - 检测到正面情绪 → 保持鼓励，继续愉快对话
 - 中性情绪 → 正常对话流程
 
-### 参考研究
+### 相关前沿研究
 
-本项目的设计理念参考了以下前沿研究：
+本项目的对话策略设计融合了应用行为分析（ABA）原则及自闭症谱系障碍（ASD）儿童的沟通特点等特殊教育实践知识。为进一步拓宽视野，以下列举该领域近期的三项代表性研究工作，供延伸阅读：
 
-- **ASD-iLLM** (EMNLP 2025): 基于 ABA 原则微调 LLM 用于自闭症对话干预
-- **AACessTalk** (CHI 2025 Best Paper): AI 辅助低语言自闭症儿童与家长沟通
-- **ASD-chat**: 基于 LLM + VB-MAPP 的对话干预系统
+- **ASD‑iLLM (EMNLP 2025 Findings)**：构建了首个中文自闭症临床对话干预数据集（ASD‑iLLM‑8k），并基于 ABA 原则对开源大语言模型进行微调，实现了自动化对话干预。该工作验证了 LLM 在结构化行为干预场景中的可行性与有效性。  
+  [ACL Anthology](https://aclanthology.org/2025.findings-emnlp.427/) | [代码](https://github.com/Shuzhong-Lai/ASD-iLLM)
+
+- **AACessTalk (CHI 2025 Best Paper)**：设计了一款平板电脑上的 AI 辅助沟通系统，通过动态情境引导与个性化词汇卡推荐，帮助低语言能力的自闭症儿童与家长进行更流畅、有意义的互动。该成果荣获人机交互顶会 CHI 2025 最佳论文奖。  
+  [项目官网](https://naver-ai.github.io/aacesstalk) | [代码](https://github.com/naver-ai/aacesstalk-monorepo)
+
+- **ASD‑Chat (arXiv 2024 / IEEE Xplore)**：结合 VB‑MAPP（语言行为里程碑评估与安置程序）评估框架与 ChatGPT 等大语言模型，设计了针对自闭症儿童的对话干预范式与提示词策略，为个性化社交技能训练提供了新的技术路径。  
+  [arXiv](https://arxiv.org/abs/2409.01867) | [IEEE](https://ieeexplore.ieee.org/document/11227794)
 
 ---
 
